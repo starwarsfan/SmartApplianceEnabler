@@ -31,7 +31,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh(
-                    build: """
+                    script: """
                         mvn clean -B -Pweb  
                         mvn package -B -Pweb
                     """
@@ -41,7 +41,7 @@ pipeline {
         stage('Dockerize') {
             steps {
                 sh(
-                    build: """
+                    script: """
                         ./buildImages.sh -7 -8 -t ${DOCKER_IMAGE_NAME}:ci -v ${VERSION}
                     """
                 )
@@ -50,7 +50,7 @@ pipeline {
         stage('Chrome') {
             steps {
                 sh(
-                    build: """
+                    script: """
                         docker stop sae || true
                         docker volume rm -f sae
                         docker volume create sae
@@ -65,7 +65,7 @@ pipeline {
         stage('Firefox') {
             steps {
                 sh(
-                    build: """
+                    script: """
                         docker stop sae || true
                         docker volume rm -f sae
                         docker volume create sae
@@ -79,7 +79,7 @@ pipeline {
         stage('Safari') {
             steps {
                 sh(
-                    build: """
+                    script: """
                         docker stop sae || true
                         docker volume rm -f sae
                         docker volume create sae
@@ -102,7 +102,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh(
-                        build: """
+                        script: """
                             echo $PASSWORD | docker login --username $USERNAME --password-stdin
                             ./buildImages.sh -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} -p
                         """
