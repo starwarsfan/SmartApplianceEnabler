@@ -42,11 +42,14 @@ pipeline {
         }
         stage('Dockerize') {
             steps {
-                sh(
-                    script: """
-                        ./buildImages.sh -7 -8 -t ${DOCKER_IMAGE_NAME}:ci -v ${VERSION}
-                    """
-                )
+                withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh(
+                        script: """
+                            echo $PASSWORD | docker login --username $USERNAME --password-stdin
+                            ./buildImages.sh -7 -8 -t ${DOCKER_IMAGE_NAME}:ci -v ${VERSION}
+                        """
+                    )
+                }
             }
         }
         stage('Chrome') {
@@ -102,14 +105,11 @@ pipeline {
                 expression { params.DOCKER_PUSH }
             }
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh(
-                        script: """
-                            echo $PASSWORD | docker login --username $USERNAME --password-stdin
-                            ./buildImages.sh -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} -p
-                        """
-                    )
-                }
+                sh(
+                    script: """
+                        ./buildImages.sh -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} -p
+                    """
+                )
             }
         }
     }
