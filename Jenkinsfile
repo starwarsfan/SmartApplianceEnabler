@@ -8,7 +8,7 @@ library identifier: 'icheko-jenkins-shared-lib@master',
 
 pipeline {
     agent {
-        label: 'buildx'
+        label 'buildx'
     }
 
     parameters {
