@@ -56,7 +56,7 @@ pipeline {
                         docker stop sae || true
                         docker volume rm -f sae
                         docker volume create sae
-                        docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae ${DOCKER_IMAGE_NAME}:ci"
+                        docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae ${DOCKER_IMAGE_NAME}:ci
                         cd src/test/angular
                         npm i
                         npm run test:chrome
@@ -71,7 +71,7 @@ pipeline {
                         docker stop sae || true
                         docker volume rm -f sae
                         docker volume create sae
-                        docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae ${DOCKER_IMAGE_NAME}:ci"
+                        docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae ${DOCKER_IMAGE_NAME}:ci
                         cd src/test/angular
                         npm run test:firefox
                     """
@@ -85,7 +85,7 @@ pipeline {
                         docker stop sae || true
                         docker volume rm -f sae
                         docker volume create sae
-                        docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae ${DOCKER_IMAGE_NAME}:ci"
+                        docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae ${DOCKER_IMAGE_NAME}:ci
                         cd src/test/angular
                         npm run test:safari
                     """
