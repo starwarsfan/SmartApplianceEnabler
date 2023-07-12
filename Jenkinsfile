@@ -7,7 +7,9 @@ library identifier: 'icheko-jenkins-shared-lib@master',
         ]) _
 
 pipeline {
-    agent any
+    agent {
+        label: 'buildx'
+    }
 
     parameters {
         booleanParam(name: 'DOCKER_PUSH', defaultValue: false, description: 'Push docker image to Dockerhub?')
@@ -23,11 +25,11 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                scmSkip(deleteBuild: false, skipPattern: '.*\\[ci skip\\].*')
-            }
-        }
+//        stage('Checkout') {
+//            steps {
+//                scmSkip(deleteBuild: false, skipPattern: '.*\\[ci skip\\].*')
+//            }
+//        }
         stage('Build') {
             steps {
                 sh(
