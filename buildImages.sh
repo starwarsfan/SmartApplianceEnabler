@@ -43,7 +43,9 @@ helpMe() {
     Optional parameters:
     -7 .. Also build ARMv7 image
     -8 .. Also build ARMv8 image
-    -p .. Push image to DockerHub
+    -p .. Push image to DockerHub. If this option is _not_ used,
+          the image for the current architecture will be installed
+          onto local docker images.
     -t <docker-tag>
        .. Docker tag to set. Default: ${DOCKER_TAG}
     -v <version>
@@ -85,7 +87,7 @@ warning() {
 
 _init
 
-PUSH_IMAGE=''
+PUSH_IMAGE='--load'
 BUILD_ARM_V7=false
 BUILD_ARM_V8=false
 PLATFORM="linux/amd64"
