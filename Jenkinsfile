@@ -53,7 +53,7 @@ pipeline {
                 }
             }
         }
-        stage('Chrome') {
+        stage('Test Chrome') {
             when {
                 expression {
                     env.SKIP_BROWSER_TESTS != 'true'
@@ -70,7 +70,7 @@ pipeline {
                 )
             }
         }
-        stage('Firefox') {
+        stage('Test Firefox') {
             when {
                 expression {
                     env.SKIP_BROWSER_TESTS != 'true'
@@ -86,7 +86,7 @@ pipeline {
                 )
             }
         }
-        stage('Safari') {
+        stage('Test Safari') {
             when {
                 expression {
                     env.SKIP_BROWSER_TESTS != 'true'
@@ -102,7 +102,7 @@ pipeline {
                 )
             }
         }
-        stage('Stop') {
+        stage('Stop Container') {
             steps {
                 sh "docker stop sae || true"
             }
