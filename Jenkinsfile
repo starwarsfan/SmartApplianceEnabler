@@ -14,6 +14,7 @@ pipeline {
     parameters {
         booleanParam(name: 'DOCKER_PUSH', defaultValue: false, description: 'Push docker image to Dockerhub?')
         booleanParam(name: 'BETA_RELEASE', defaultValue: false, description: 'Is this a beta release?')
+        booleanParam(name: 'SKIP_BROWSER_TESTS', defaultValue: false, description: 'Skip tests on different browsers')
         string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'avanux/smartapplianceenabler', description: 'Default name of Docker image')
     }
 
@@ -53,6 +54,11 @@ pipeline {
             }
         }
         stage('Chrome') {
+            when {
+                expression {
+                    env.SKIP_BROWSER_TESTS != 'true'
+                }
+            }
             steps {
                 sh(
                     script: """
@@ -68,6 +74,11 @@ pipeline {
             }
         }
         stage('Firefox') {
+            when {
+                expression {
+                    env.SKIP_BROWSER_TESTS != 'true'
+                }
+            }
             steps {
                 sh(
                     script: """
@@ -82,6 +93,11 @@ pipeline {
             }
         }
         stage('Safari') {
+            when {
+                expression {
+                    env.SKIP_BROWSER_TESTS != 'true'
+                }
+            }
             steps {
                 sh(
                     script: """
