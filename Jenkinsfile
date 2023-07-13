@@ -46,7 +46,7 @@ pipeline {
                     sh(
                         script: """
                             echo $PASSWORD | docker login --username $USERNAME --password-stdin
-                            ./buildImages.sh -7 -8 -t ${DOCKER_IMAGE_NAME}:ci -v ${VERSION}
+                            ./buildImages.sh -t ${DOCKER_IMAGE_NAME}:ci -v ${VERSION}
                         """
                     )
                 }
@@ -107,7 +107,7 @@ pipeline {
             steps {
                 sh(
                     script: """
-                        ./buildImages.sh -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} -p
+                        ./buildImages.sh -7 -8 -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} -v ${VERSION} -p
                     """
                 )
             }
