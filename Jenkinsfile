@@ -60,12 +60,9 @@ pipeline {
                 }
             }
             steps {
+                startContainer("${DOCKER_IMAGE_NAME}")
                 sh(
                     script: """
-                        docker stop sae || true
-                        docker volume rm -f sae
-                        docker volume create sae
-                        docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae ${DOCKER_IMAGE_NAME}:ci
                         cd src/test/angular
                         npm i
                         npm run test:chrome
@@ -80,12 +77,9 @@ pipeline {
                 }
             }
             steps {
+                startContainer("${DOCKER_IMAGE_NAME}")
                 sh(
                     script: """
-                        docker stop sae || true
-                        docker volume rm -f sae
-                        docker volume create sae
-                        docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae ${DOCKER_IMAGE_NAME}:ci
                         cd src/test/angular
                         npm run test:firefox
                     """
@@ -99,12 +93,9 @@ pipeline {
                 }
             }
             steps {
+                startContainer("${DOCKER_IMAGE_NAME}")
                 sh(
                     script: """
-                        docker stop sae || true
-                        docker volume rm -f sae
-                        docker volume create sae
-                        docker run -d --rm -v sae:/opt/sae/data -p 8081:8080 --name sae ${DOCKER_IMAGE_NAME}:ci
                         cd src/test/angular
                         npm run test:safari
                     """
@@ -128,5 +119,26 @@ pipeline {
                 )
             }
         }
+    }
+}
+
+def startContainer(String DOCKER_IMAGE_NAME) {
+    script {
+        sh(
+            script: """
+                docker stop sae || true
+                docker volume rm -f sae
+                docker volume create sae
+                docker run \
+                    -d \
+                    --rm \
+                    -v sae:/opt/sae/data \
+                    -p 8081:8080 \
+                    -e SAE_HTTP_DISABLED=true \
+                    -e SAE_MODBUS_DISABLED=true \
+                    --name sae \
+                    ${DOCKER_IMAGE_NAME}:ci
+            """
+        )
     }
 }
