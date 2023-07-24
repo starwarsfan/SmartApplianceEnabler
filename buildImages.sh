@@ -67,10 +67,10 @@ _init() {
 }
 
 die() {
-    error=${1:-1}
+    local _error=${1:-1}
     shift
     error "$*" >&2
-    exit ${error}
+    exit "${_error}"
 }
 
 info() {
