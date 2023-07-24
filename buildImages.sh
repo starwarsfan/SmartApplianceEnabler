@@ -21,7 +21,7 @@
 #
 # Created: 2023-07-12 Y. Schumann
 #
-# Helper script to build and push SmartApplianceEnabler baseimage
+# Helper script to build and push SmartApplianceEnabler Docker image
 #
 # ===========================================================================
 
@@ -35,7 +35,7 @@ cd "${ownLocation}" || exit 1
 helpMe() {
     echo "
     Helper script to build SmartApplianceEnabler Docker image
-    for AMD64 aka x86_64 architecture.
+    for AMD64 aka x86_64 and optionally other architectures.
 
     Usage:
     ${0} [options]
