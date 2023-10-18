@@ -376,12 +376,8 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         boolean errorState = control.isInErrorState();
         boolean hasOnlyEmptyRequestsBeforeTimeGap = hasOnlyEmptyRequestsBeforeTimeGap(now);
         boolean wasInStateVehicleConnected = wasInState(EVChargerState.VEHICLE_CONNECTED);
-        boolean activeTimeframeIntervalRequestIsFinished = false;
-        if(appliance.getTimeframeIntervalHandler().getActiveTimeframeInterval() != null) {
-            activeTimeframeIntervalRequestIsFinished = appliance.getTimeframeIntervalHandler()
-                    .getActiveTimeframeInterval().getRequest().isFinished(now);
-        }
-        logger.debug("{}: currentState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} vehicleConnected={} charging={} errorState={} wasInStateVehicleConnected={} firstInvocationAfterSkip={} hasOnlyEmptyRequestsBeforeTimeGap={} activeTimeframeIntervalRequestIsFinished={}", applianceId, currenState, startChargingRequested, stopChargingRequested, vehicleNotConnected, vehicleConnected, charging, errorState, wasInStateVehicleConnected, firstInvocationAfterSkip, hasOnlyEmptyRequestsBeforeTimeGap, activeTimeframeIntervalRequestIsFinished);
+        boolean allTimeframeIntervalRequestsAreFinished = appliance.getTimeframeIntervalHandler().getQueue().stream().allMatch(interval -> interval.getRequest().isFinished(now));
+        logger.debug("{}: currentState={} startChargingRequested={} stopChargingRequested={} vehicleNotConnected={} vehicleConnected={} charging={} errorState={} wasInStateVehicleConnected={} firstInvocationAfterSkip={} hasOnlyEmptyRequestsBeforeTimeGap={} allTimeframeIntervalRequestsAreFinished={}", applianceId, currenState, startChargingRequested, stopChargingRequested, vehicleNotConnected, vehicleConnected, charging, errorState, wasInStateVehicleConnected, firstInvocationAfterSkip, hasOnlyEmptyRequestsBeforeTimeGap, allTimeframeIntervalRequestsAreFinished);
 
         // only use variables logged above
         if(errorState) {
@@ -402,7 +398,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             // the charger may start charging right after it has been connected
             return EVChargerState.CHARGING;
         }
-        else if(currenState == EVChargerState.CHARGING_COMPLETED && activeTimeframeIntervalRequestIsFinished) {
+        else if(currenState == EVChargerState.CHARGING_COMPLETED && allTimeframeIntervalRequestsAreFinished) {
             return EVChargerState.CHARGING_COMPLETED;
         }
         else if(this.stopChargingRequested && vehicleConnected) {
@@ -420,7 +416,7 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
             }
         }
         else if(vehicleConnected && !charging) {
-            if(currenState == EVChargerState.CHARGING && activeTimeframeIntervalRequestIsFinished) {
+            if(currenState == EVChargerState.CHARGING && allTimeframeIntervalRequestsAreFinished) {
                 return EVChargerState.CHARGING_COMPLETED;
             }
             return EVChargerState.VEHICLE_CONNECTED;
@@ -499,20 +495,20 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
         if(newState == EVChargerState.VEHICLE_CONNECTED) {
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.VEHICLE_CONNECTED)) {
                 setPowerToMinimum();
-                startCharging();
+                this.on(now, true);
             }
         }
         if(newState == EVChargerState.CHARGING) {
             if(previousState == EVChargerState.VEHICLE_NOT_CONNECTED) {
-                stopCharging();
+                this.on(now, false);
             }
             if(getForceInitialCharging() && wasInStateOneTime(EVChargerState.CHARGING)) {
                 logger.debug("{}: Stopping forced initial charging", applianceId);
-                stopCharging();
+                this.on(now, false);
             }
         }
         if(newState == EVChargerState.CHARGING_COMPLETED) {
-            stopCharging();
+            this.on(now, false);
             this.evHandler.onChargingCompleted();
         }
         if(newState == EVChargerState.VEHICLE_NOT_CONNECTED) {
@@ -739,7 +735,9 @@ public class ElectricVehicleCharger implements VariablePowerConsumer, ApplianceL
 
     @Override
     public void timeframeIntervalCreated(LocalDateTime now, TimeframeInterval timeframeInterval) {
-        timeframeInterval.getRequest().setEnabled(false);
+        if(this.evHandler.getConnectedVehicle().getSocScript() != null && timeframeInterval.getRequest() instanceof SocRequest) {
+            timeframeInterval.getRequest().setEnabled(false);
+        }
     }
 
     @Override

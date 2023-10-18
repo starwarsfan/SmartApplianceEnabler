@@ -90,7 +90,7 @@ The docker volume `sae` will be created automatically at startup if it doesn't a
 ### `systemd` for `docker-compose`
 Even if the *Smart Appliance Enabler* is operated as a Docker container, it makes sense to manage the container as a [Systemd](https://de.wikipedia.org/wiki/Systemd) service. The file ```/etc/systemd/system/smartapplianceenabler-docker-compose.service``` is used for this, which is downloaded and configured below:
 ```console
-$ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/systemd/system/smartapplianceenabler-docker-compose.service -P /etc/systemd/system
+$ sudo wget https://github.com/camueller/SmartApplianceEnabler/blob/master/run/lib/systemd/system/smartapplianceenabler-docker-compose.service -P /etc/systemd/system
 $ sudo chown root.root /etc/systemd/system/smartapplianceenabler-docker-compose.service
 $ sudo chmod 644 /etc/systemd/system/smartapplianceenabler-docker-compose.service
 ```
@@ -115,8 +115,7 @@ sudo systemctl start smartapplianceenabler-docker-compose
 sudo systemctl stop smartapplianceenabler-docker-compose
 ```
 
-#### Status of the container
-<a name="container-status">
+#### <a name="container-status"></a> Status of the container
 
 If the container is running with the *Smart Appliance Enabler*, the status should be `active (running)`:
 ```console
@@ -242,7 +241,7 @@ sae
 ### Automatic start of container by systemd
 Even if the *Smart Appliance Enabler* is operated as a Docker container, it makes sense to manage the container as a [Systemd](https://de.wikipedia.org/wiki/Systemd) service. The file `/etc/systemd/system/smartapplianceenabler-docker.service` is used for this, which is downloaded and configured below:
 ```console
-pi@raspberrypi ~ $ sudo wget https://github.com/camueller/SmartApplianceEnabler/raw/master/run/etc/systemd/system/smartapplianceenabler-docker.service -P /etc/systemd/system
+pi@raspberrypi ~ $ sudo wget https://raw.githubusercontent.com/camueller/SmartApplianceEnabler/master/run/lib/systemd/system/smartapplianceenabler-docker.service -P /etc/systemd/system
 pi@raspberrypi ~ $ sudo chown root.root /etc/systemd/system/smartapplianceenabler-docker.service
 pi@raspberrypi ~ $ sudo chmod 755 /etc/systemd/system/smartapplianceenabler-docker.service
 ```
